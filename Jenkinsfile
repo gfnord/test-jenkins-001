@@ -1,13 +1,17 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('Staging') {
             steps {
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                '''
+                retry(3) {
+                    sh '''
+                        echo "Ping loraserver..."
+                        ping -c 3 10.150.1.198
+                    '''
+                }
+                timeout(time: 1, unit: 'MINUTES') {
+                    sh 'echo "Timeout reached"'
+                }
             }
         }
     }
